@@ -1,14 +1,14 @@
 import { ref } from "vue";
 export const fetchProductData = () => {
-  const urlCloudImage =
-    "https://res.cloudinary.com/ddo8dn17e/image/upload/e_background_removal/";
+  const urlCloudImage = process.env.VUE_APP_CLOUD_IMG_URL; //Lấy url của cloud image từ file .env
+  const baseURL = process.env.VUE_APP_BASE_URL; //Lấy url của backend từ file .env
 
   //Khai báo list product để nhận response từ product
   const products = ref([]);
   const fetchProductsData = async () => {
     try {
       // Chờ response từ backendbackend
-      const response = await fetch("http://localhost:9999/api/product", {
+      const response = await fetch(`${baseURL}/api/product`, {
         method: "GET",
       });
       // Nếu response không có thì in ra lỗilỗi

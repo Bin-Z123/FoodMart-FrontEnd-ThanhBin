@@ -6,11 +6,7 @@
   <section class="py-5 px-5">
     <div class="d-flex justify-content-between align-items-center">
       <h2>All Product</h2>
-      <select
-        class="form-select align-items-end w-25"
-        name="category"
-        id="category"
-      >
+      <select class="form-select align-items-end w-25" id="category">
         <option value="all">All</option>
         <option
           v-for="category in categories"
@@ -38,7 +34,7 @@
                     ><img :src="banana" alt="img"
                   /></a>
                 </figure>
-                <h3>Banana is a category name product title</h3>
+                <h3>Banana is a category name</h3>
                 <span class="qty">29<span> unit</span></span>
                 <span class="price">5000 <span>₫</span></span>
                 <div class="d-flex align-item-center justify-content-between">
@@ -83,7 +79,7 @@
                     ><img
                       class=""
                       style="height: 200px"
-                      :src="`${urlCloudImage}${product.image}`"
+                      :src="banana"
                       alt="img"
                   /></a>
                 </figure>
@@ -160,10 +156,11 @@ const fetchCategoryData = async () => {
 
 // Product
 import { fetchProductData } from "@/assets/js/product/fetchProduct.js";
-const { products, fetchProductsData, urlCloudImage } = fetchProductData();
+const { products, fetchProductsData } = fetchProductData();
 onMounted(() => {
   fetchCategoryData();
   fetchProductsData();
+  console.log(document.cookie);
 });
 </script>
 

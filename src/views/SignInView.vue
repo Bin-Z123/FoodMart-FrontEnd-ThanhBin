@@ -11,7 +11,10 @@
             type="text"
             class="form-control"
             id="username"
-            name="password"
+            name="username"
+            placeholder="Username or Email"
+            autocomplete="username"
+            @input="error.messages = ''"
           />
         </div>
         <div class="mb-3">
@@ -22,7 +25,11 @@
             class="form-control"
             id="password"
             name="password"
+            placeholder="Password"
+            autocomplete="current-password"
+            @input="error.messages = ''"
           />
+          <p class="text-danger">{{ error.messages }}</p>
         </div>
         <div class="mb-3 form-check d-flex justify-content-between">
           <div>
@@ -30,6 +37,7 @@
               type="checkbox"
               class="form-check-input"
               id="exampleCheck1"
+              disabled
             />
             <label class="form-check-label" for="exampleCheck1"
               >Remember me</label
@@ -49,7 +57,7 @@
       </form>
       <p class="mt-2 mb-2 text-center">or</p>
       <router-link to="/signup"
-        ><button type="btn" class="btn btn-success w-100">
+        ><button type="button" class="btn btn-success w-100">
           Sign up
         </button></router-link
       >
@@ -63,25 +71,36 @@ const formLogin = ref({
   username: "",
   password: "",
 });
+const error = ref({
+  messages: "",
+});
 const fetchLogin = async () => {
   console.log(formLogin.value.username, formLogin.value.password);
+  const formData = new FormData();
+  formData.append("username", formLogin.value.username);
+  formData.append("password", formLogin.value.password);
   try {
-    const response = await fetch("http://localhost:1234/api/login", {
+    const response = await fetch("http://localhost:9999/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: formLogin.value.username,
-        password: formLogin.value.password,
-      }),
+      body: formData,
+      credentials: "include", // Để lưu session ID vào cookie
     });
 
-    if (!response.ok) {
-      console.log("Loi Khong Xac Dinh: " + response);
+    if (response.ok) {
+      alert("Đăng nhập thành công");
+      console.log("Đăng nhập thành công");
+      window.location.href = "/";
+    } else {
+      switch (response.status) {
+        case 401:
+          error.value.messages = "Sai tài khoản hoặc mật khẩu";
+          break;
+        default:
+          alert("Loi khong xac dinh", response.status);
+      }
     }
-    const data = await response.json();
-    console.log(data);
+    const text = await response.text();
+    console.log(text);
   } catch (error) {
     console.log("Error", error);
   }

@@ -10,7 +10,10 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <!-- Header -->
+          <slot name="header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          </slot>
           <button
             type="button"
             class="btn-close"
@@ -18,16 +21,13 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">...</div>
+        <div class="modal-body">
+          <!-- Body -->
+          <slot name="body">...</slot>
+        </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <!-- Footer -->
+          <slot name="footer"> </slot>
         </div>
       </div>
     </div>

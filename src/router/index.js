@@ -8,6 +8,8 @@ import AccountView from "../views/admin/AccountView.vue";
 import CategoryProductView from "../views/admin/CategoryProductView.vue";
 import ProductView from "../views/admin/ProductView.vue";
 import OrderView from "../views/admin/OrderView.vue";
+import AdminLayout from "@/views/admin/AdminLayout.vue";
+const baseURL = process.env.VUE_APP_BASE_URL; //Lấy url của backend từ file .env
 const routers = [
   {
     path: "/",
@@ -31,35 +33,80 @@ const routers = [
   },
   //Admin
   {
-    path: "/admin/dashboard",
-    name: "DashBoard",
-    component: DashBoard,
-  },
-  {
-    path: "/admin/account",
-    name: "Account",
-    component: AccountView,
-  },
-  {
-    path: "/admin/category",
-    name: "CategoryProduct",
-    component: CategoryProductView,
-  },
-  {
-    path: "/admin/product",
-    name: "Product",
-    component: ProductView,
-  },
-  {
-    path: "/admin/order",
-    name: "Order",
-    component: OrderView,
+    path: "/admin",
+    component: AdminLayout,
+    meta: { requiresAuth: true, role: true },
+    children: [
+      {
+        path: "dashboard",
+        name: "DashBoard",
+        component: DashBoard,
+      },
+      {
+        path: "account",
+        name: "Account",
+        component: AccountView,
+      },
+      {
+        path: "category",
+        name: "CategoryProduct",
+        component: CategoryProductView,
+      },
+      {
+        path: "product",
+        name: "Product",
+        component: ProductView,
+      },
+      {
+        path: "order",
+        name: "Order",
+        component: OrderView,
+      },
+    ],
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes: routers,
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth) {
+    try {
+      const response = await fetch(`${baseURL}/api/user/profile`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const userRole = data.result.role;
+        if (to.meta.requiresAuth && to.meta.role !== userRole) {
+          alert("Bạn không có quyền truy cập!");
+          next("/");
+        } else {
+          next();
+        }
+      } else if (response.status === 401) {
+        //Nêu chưa đăng nhập
+        if (to.path !== "/signin") {
+          alert("Vui lòng đăng nhập!");
+          next("/signin");
+        } else {
+          next();
+        }
+      } else {
+        alert("Loi khong xac dinh", response.status);
+        next("/");
+      }
+    } catch (error) {
+      console.error("Lỗi kiểm tra quyền", error);
+      next("/signin");
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

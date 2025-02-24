@@ -10,7 +10,9 @@
     <div class="offcanvas-header">
       <h5 class="offcanvas-title text-warning" id="offcanvasExampleLabel">
         Your Cart
-        <button class="btn btn-warning rounded-pill text-white">3</button>
+        <button class="btn btn-warning rounded-pill text-white">
+          {{ carts.length }}
+        </button>
       </h5>
       <button
         type="button"
@@ -21,10 +23,14 @@
     </div>
     <div class="offcanvas-body">
       <ul class="list-group mb-3">
-        <li class="list-group-item d-flex justify-content-between lh-sm">
+        <li
+          class="list-group-item d-flex justify-content-between lh-sm"
+          v-for="cart in carts"
+          :key="cart.id"
+        >
           <div>
             <h6 class="my-0">
-              Product name Product name Product name Product name Product name
+              {{ cart.product.nameProduct }}{{ cart.id.idUser }}
             </h6>
             <div class="d-flex align-item-center">
               <div class="input-group product-qty mt-1">
@@ -38,7 +44,7 @@
                   name="quantity"
                   id="quantity"
                   class="form-control input-number"
-                  value="1"
+                  v-model="cart.quantity"
                 />
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-success btn-number">
@@ -47,57 +53,21 @@
                 </span>
               </div>
               <span class="mt-2"
-                ><span class="text-white">.</span> <span> x </span>5000
-                <span>₫</span></span
+                ><span class="text-white">.</span> <span> x </span
+                >{{ cart.product.price }} <span>₫</span></span
               >
             </div>
           </div>
           <span
-            class="text-body-secondary align-items-center justify-content-center price"
+            class="text-body-secondary align-items-center justify-content-center price total"
             style="margin: auto"
           >
-            100000<span>₫</span></span
-          >
-        </li>
-        <li class="list-group-item d-flex justify-content-between lh-sm">
-          <div>
-            <h6 class="my-0">Product name Product name Product name</h6>
-            <div class="d-flex align-item-center">
-              <div class="input-group product-qty mt-1">
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-danger btn-number">
-                    <i class="fa-solid fa-minus fa-lg"></i>
-                  </button>
-                </span>
-                <input
-                  type="text"
-                  name="quantity"
-                  id="quantity"
-                  class="form-control input-number"
-                  value="1"
-                />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-success btn-number">
-                    <i class="fa-solid fa-plus fa-lg"></i>
-                  </button>
-                </span>
-              </div>
-              <span class="mt-2"
-                ><span class="text-white">.</span> <span> x </span>5000
-                <span>₫</span></span
-              >
-            </div>
-          </div>
-          <span
-            class="text-body-secondary align-items-center justify-content-center price"
-            style="margin: auto"
-          >
-            100000<span>₫</span></span
+            {{ calculateTotal(cart) }}<span>₫</span></span
           >
         </li>
         <li class="list-group-item d-flex justify-content-between">
           <span class="price" style="font-size: 18px">Total (VND)</span>
-          <strong>200000<span>₫</span></strong>
+          <strong class="total">{{ toTal() }}<span>₫</span></strong>
         </li>
       </ul>
       <button
@@ -110,6 +80,64 @@
     </div>
   </div>
 </template>
+<script setup>
+import { onMounted, watch } from "vue";
+import { fetchCartbyUser } from "@/assets/js/cart/fetchCart";
+import { defineProps, defineEmits } from "vue";
+import { eventBus } from "@/assets/js/eventBus";
+// AddCart
+const emit = defineEmits(["update-total"]);
+const calculateTotal = (cart) => {
+  if (!cart || !cart.product || !cart.quantity || !cart.product.price) {
+    return 0;
+  }
+  return cart.quantity * cart.product.price;
+};
+const toTal = () => {
+  const total = carts.value.reduce(
+    (total, cart) => total + calculateTotal(cart),
+    0
+  );
+  emit("update-total", total);
+  return total;
+};
+
+// LOAD CART
+const props = defineProps({
+  user: Object,
+  isLogin: Boolean,
+});
+const { carts, fetchCartUser } = fetchCartbyUser();
+onMounted(() => {
+  if (props.isLogin && props.user && props.user.id) {
+    fetchCartUser(user.id);
+    console.log("user-cart: ", user.value);
+    console.log("cart: ", carts.value);
+  }
+});
+watch(
+  () => props.user,
+  async (newUser) => {
+    if (props.isLogin && newUser && newUser.id) {
+      await fetchCartUser(newUser.id);
+      console.log("user-cart(watch): ", newUser);
+      console.log("cart(watch): ", carts.value);
+    }
+  },
+  { immediate: true }
+);
+// Lắng nghe sự kiện và fetch lại giỏ hàng khi có cập nhật
+watch(
+  () => eventBus.cartUpdated,
+  async (newValue) => {
+    if (newValue && props.user && props.user.id) {
+      await fetchCartUser(props.user.id);
+      eventBus.cartUpdated = false; //đổi lại trạng thái ban đầu cho eventBus
+      console.log("Cart updated and reloaded!");
+    }
+  }
+);
+</script>
 <style scoped>
 /* input group */
 .input-group {

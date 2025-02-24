@@ -53,7 +53,13 @@
             Forgot Password ?
           </button>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        <button type="submit" class="btn btn-primary w-100">
+          <span v-if="isLoading" :disabled="isLoading"
+            ><div class="spinner-border spinner-border-sm" role="status"></div>
+            Signing in...</span
+          >
+          <span v-else>Sign in</span>
+        </button>
       </form>
       <p class="mt-2 mb-2 text-center">or</p>
       <router-link to="/signup"
@@ -67,6 +73,8 @@
 <script setup>
 import HeaderApp from "@/components/HeaderApp.vue";
 import { ref } from "vue";
+import { fetchUserData } from "@/assets/js/user/fetchUser";
+
 const formLogin = ref({
   username: "",
   password: "",
@@ -74,7 +82,9 @@ const formLogin = ref({
 const error = ref({
   messages: "",
 });
+const isLoading = ref(false);
 const fetchLogin = async () => {
+  isLoading.value = true;
   console.log(formLogin.value.username, formLogin.value.password);
   const formData = new FormData();
   formData.append("username", formLogin.value.username);
@@ -87,9 +97,17 @@ const fetchLogin = async () => {
     });
 
     if (response.ok) {
-      alert("Đăng nhập thành công");
       console.log("Đăng nhập thành công");
-      window.location.href = "/";
+      const { user, fetchUserProfile } = fetchUserData();
+      await fetchUserProfile();
+      console.log("User Login:", user.role);
+      console.log("Role:", user.role);
+      if (user.value.role == true) {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/";
+      }
+      alert("Đăng nhập thành công");
     } else {
       switch (response.status) {
         case 401:
@@ -103,6 +121,8 @@ const fetchLogin = async () => {
     console.log(text);
   } catch (error) {
     console.log("Error", error);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>

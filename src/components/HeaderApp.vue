@@ -40,9 +40,9 @@
                 <span
                   class="d-none d-lg-block"
                   style="font-weight: 700; font-size: 18px"
-                  >Võ Thanh Bin</span
-                ></router-link
-              >
+                  v-text="user.fullname"
+                ></span
+              ></router-link>
             </li>
             <!-- Your Cart -->
             <li>
@@ -59,12 +59,12 @@
                 <span
                   class="d-none d-lg-block"
                   style="font-weight: 700; font-size: 18px"
-                  >100000000<span> ₫</span></span
+                  >{{ totalAmount }}<span> ₫</span></span
                 >
               </button>
             </li>
             <!-- Login -->
-            <li>
+            <li v-if="!isLogin">
               <router-link
                 to="/signin"
                 class="rounded p-1 bg-light me-2 d-flex flex-column align-items-center"
@@ -77,19 +77,52 @@
                 ></router-link
               >
             </li>
+            <li v-else>
+              <router-link
+                to="#"
+                @click="fetchLogout"
+                class="rounded p-1 bg-light me-2 d-flex flex-column align-items-center"
+              >
+                <span><i class="fa-solid fa-right-to-bracket"></i></span>
+                <span
+                  class="d-none d-lg-block"
+                  style="font-weight: 700; font-size: 18px"
+                  >Logout</span
+                ></router-link
+              >
+            </li>
           </ul>
         </div>
       </div>
     </div>
-    <CartApp />
+    <CartApp
+      :user="user"
+      :isLogin="isLogin"
+      @update-total="handleUpdateTotal"
+    />
     <ForgotPasswordModal />
   </header>
+  <div class="box"></div>
 </template>
 
 <script setup>
 import logo from "../assets/images/logo.png";
 import CartApp from "./CartApp.vue";
 import ForgotPasswordModal from "./ForgotPasswordModal.vue";
+import { onMounted, ref } from "vue";
+import { fetchUserData } from "@/assets/js/user/fetchUser";
+import { fetchlogOut } from "@/assets/js/auth/fetchAuth";
+const { fetchLogout } = fetchlogOut();
+const { user, fetchUserProfile, isLogin } = fetchUserData();
+// const fetchLogout = async () => {};
+const totalAmount = ref(0);
+
+const handleUpdateTotal = (newTotal) => {
+  totalAmount.value = newTotal;
+};
+onMounted(() => {
+  fetchUserProfile();
+});
 </script>
 <style scoped>
 a {
@@ -98,6 +131,15 @@ a {
 }
 
 header {
+  background-color: rgba(255, 255, 255, 0.65);
   background-image: url("../assets/images/bg.png");
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+.box {
+  height: 100px;
 }
 </style>

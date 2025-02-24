@@ -21,7 +21,7 @@
             :class="{ active: selectedItem === 'dashboard' }"
             @click="selectItem('dashboard')"
           >
-            <router-link class="router-link" to="/"
+            <router-link class="router-link" to="/admin/dashboard"
               ><i class="bi bi-grid"></i> Dashboard</router-link
             >
           </li>

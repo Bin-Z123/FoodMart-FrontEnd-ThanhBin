@@ -19,7 +19,7 @@
     <div class="profile-body p-4 mt-0 row">
       <div class="col-lg-5 mt-2">
         <div class="d-flex align-items-center">
-          <h2>Nguyễn Văn A</h2>
+          <h2>{{ user.fullname }}</h2>
           <span><i>(binbolao100)</i></span>
         </div>
 
@@ -32,7 +32,7 @@
             type="text"
             name="username"
             id="username"
-            value="2455698"
+            :value="user.id"
             disabled
           />
         </div>
@@ -175,10 +175,16 @@
 import HeaderApp from "@/components/HeaderApp.vue";
 import banana from "../assets/images/me.jpg";
 import { ref } from "vue";
+import { onMounted } from "vue";
+import { fetchUserData } from "@/assets/js/user/fetchUser";
 
 const fullname = ref("Võ Thanh Bin");
 const isDisabled = ref(true);
 const isShowAddress = ref(false);
+const { user, fetchUserProfile } = fetchUserData();
+onMounted(() => {
+  fetchUserProfile();
+});
 
 const onToggleAddress = () => {
   isShowAddress.value = !isShowAddress.value;

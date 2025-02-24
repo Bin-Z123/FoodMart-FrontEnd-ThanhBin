@@ -1,5 +1,5 @@
 <template>
-  <HeaderApp />
+  <HeaderApp :fetchCartUser="fetchCartUser" />
   <NavbarApp />
   <SliderApp />
   <!-- <CartApp /> -->
@@ -23,47 +23,6 @@
           <div
             class="products-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5"
           >
-            <!-- Product -->
-            <div class="col">
-              <div class="product-item">
-                <span class="text-decoration-line-through position-absolute m-3"
-                  >10000</span
-                >
-                <figure>
-                  <a href="/" title="Product title"
-                    ><img :src="banana" alt="img"
-                  /></a>
-                </figure>
-                <h3>Banana is a category name</h3>
-                <span class="qty">29<span> unit</span></span>
-                <span class="price">5000 <span>₫</span></span>
-                <div class="d-flex align-item-center justify-content-between">
-                  <div class="input-group product-qty mt-1">
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-danger btn-number">
-                        <i class="fa-solid fa-minus fa-lg"></i>
-                      </button>
-                    </span>
-                    <input
-                      type="text"
-                      name="quantity"
-                      id="quantity"
-                      class="form-control input-number"
-                      value="1"
-                    />
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-success btn-number">
-                        <i class="fa-solid fa-plus fa-lg"></i>
-                      </button>
-                    </span>
-                  </div>
-                  <a href="#" class="add-cart text-decoration-none"
-                    >Add to cart</a
-                  >
-                </div>
-              </div>
-            </div>
-
             <div
               class="col"
               v-for="product in products"
@@ -85,39 +44,16 @@
                 </figure>
                 <h3>{{ product.nameProduct }}</h3>
                 <span class="qty"
-                  >{{ product.soldQuantity }}<span> unit</span></span
+                  >{{ product.stockQuantity }}<span> unit/sold </span
+                  >{{ product.soldQuantity }}</span
                 >
                 <span class="price">{{ product.price }} <span>₫</span></span>
 
-                <div class="d-flex align-item-center justify-content-between">
-                  <div class="input-group product-qty mt-1">
-                    <span class="input-group-btn">
-                      <button
-                        type="button"
-                        @click="countCart--"
-                        class="btn btn-danger btn-number"
-                      >
-                        <i class="fa-solid fa-minus fa-lg"></i>
-                      </button>
-                    </span>
-                    <input
-                      type="text"
-                      name="quantity"
-                      id="quantity"
-                      class="form-control input-number"
-                      v-model="countCart"
-                    />
-                    <span class="input-group-btn">
-                      <button
-                        type="button"
-                        @click="countCart++"
-                        class="btn btn-success btn-number"
-                      >
-                        <i class="fa-solid fa-plus fa-lg"></i>
-                      </button>
-                    </span>
-                  </div>
-                  <a href="#" class="add-cart text-decoration-none"
+                <div class="d-flex align-item-center justify-content-center">
+                  <a
+                    href="#"
+                    class="add-cart text-decoration-none"
+                    @click.prevent="addCart(product.id)"
                     >Add to cart</a
                   >
                 </div>
@@ -134,12 +70,14 @@ import HeaderApp from "@/components/HeaderApp.vue";
 import NavbarApp from "@/components/NavbarApp.vue";
 import SliderApp from "@/components/SliderApp.vue";
 import banana from "../assets/images/bananas.png";
-// import CartApp from "@/components/CartApp.vue";
 import { onMounted } from "vue";
 import { ref } from "vue";
+import { fetchAddCartProduct } from "@/assets/js/cart/fetchCart";
+import { fetchCartbyUser } from "@/assets/js/cart/fetchCart";
+import { fetchUserData } from "@/assets/js/user/fetchUser";
+import { eventBus } from "@/assets/js/eventBus";
 // Category
 const categories = ref([]);
-const countCart = ref(1);
 
 const fetchCategoryData = async () => {
   try {
@@ -162,6 +100,20 @@ onMounted(() => {
   fetchProductsData();
   console.log(document.cookie);
 });
+// ADD CART
+
+const { fetchAddCart } = fetchAddCartProduct();
+const { fetchUserProfile, user } = fetchUserData();
+const { fetchCartUser } = fetchCartbyUser();
+
+const addCart = async (idProduct) => {
+  await fetchUserProfile();
+  await fetchAddCart(user.value.id, idProduct, 1);
+
+  eventBus.cartUpdated = true; // Cho biến mới tạo - true
+
+  console.log("Product add Cart");
+};
 </script>
 
 <style scoped>

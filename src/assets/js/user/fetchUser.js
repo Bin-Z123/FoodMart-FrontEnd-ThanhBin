@@ -36,8 +36,8 @@ export const fetchUserData = () => {
 };
 // ADDRESS
 export const fetchUserAddress = () => {
-  const address = ref([]);
-  const fetchUserAddress = async (userID) => {
+  const addresses = ref([]);
+  const fetchUserAddresses = async (userID) => {
     try {
       const response = await fetch(`${baseURL}/api/user/address/${userID}`, {
         method: "GET",
@@ -45,19 +45,48 @@ export const fetchUserAddress = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        address.value = data.result;
-        console.log("Address: ", address.value);
+        addresses.value = data.result;
       } else if (response.status === 401 || response.status === 403) {
         alert("Vui lòng đăng nhập");
       } else {
         alert("Lỗi không xác định");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Er Adress", error);
     }
   };
   return {
-    address,
-    fetchUserAddress,
+    addresses,
+    fetchUserAddresses,
+  };
+};
+// CREATE ADDRESS
+export const fetchUserAddressCreate = () => {
+  const isLoadingAddress = false;
+  const fetchAddressCreate = async (address) => {
+    isLoadingAddress = true;
+    try {
+      const response = await fetch(`${baseURL}/api/user/address`, {
+        method: "POST",
+        body: JSON.stringify(address),
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = response.json;
+        console.log("Dữ liệu trả về khi thêm address: ", data);
+      } else if (response.status === 401 || response.status === 403) {
+        alert("Vui Lòng Đăng Nhập");
+      } else {
+        alert("Lỗi không xác định");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      isLoadingAddress = false;
+    }
+  };
+  return {
+    isLoadingAddress,
+    fetchAddressCreate,
   };
 };

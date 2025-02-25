@@ -17,7 +17,7 @@ export const fetchProductData = () => {
       }
       // Nhận được response từ backend rồi đưa response vào List Product vừa khai báo ở trêntrên
       products.value = await response.json();
-      console.log(products.value);
+      // console.log(products.value);
     } catch (error) {
       //Này là code lỗi sẽ báo ở đây
       console.log(error);

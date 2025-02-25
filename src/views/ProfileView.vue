@@ -20,7 +20,9 @@
       <div class="col-lg-5 mt-2">
         <div class="d-flex align-items-center">
           <h2>{{ user.fullname }}</h2>
-          <span><i>(binbolao100)</i></span>
+          <span
+            ><i>({{ user.username }})</i></span
+          >
         </div>
 
         <!-- <form action=""> -->
@@ -44,7 +46,7 @@
             type="text"
             name="fullname"
             id="fullname"
-            v-model="fullname"
+            v-model="user.fullname"
             :disabled="isDisabled"
           /><button @click="toggleInput" class="btn btn-light">
             <i class="fa-solid fa-pen"></i>
@@ -58,7 +60,7 @@
             type="text"
             name="username"
             id="username"
-            value="thanhvo201600@gmail.com"
+            v-model="user.email"
             disabled
           />
         </div>
@@ -70,7 +72,7 @@
             type="password"
             name="password"
             id="password"
-            value="********"
+            v-model="user.password"
             :disabled="true"
           /><button class="btn btn-light">
             <i class="fa-solid fa-pen"></i>
@@ -84,7 +86,7 @@
             type="text"
             name="role"
             id="role"
-            value="User"
+            :value="user.role ? 'Admin' : 'User'"
             disabled
           />
         </div>
@@ -132,7 +134,11 @@
         </div>
         <!-- List Address -->
         <ul class="list-group mt-1">
-          <li class="list-group-item">
+          <li
+            class="list-group-item"
+            v-for="address in addresses"
+            :key="address.id"
+          >
             <div class="d-flex justify-content-between">
               <h5>Address 1</h5>
               <div>
@@ -143,28 +149,11 @@
                 </button>
               </div>
             </div>
-            <p>City: HCM</p>
-            <p>District: 1</p>
-            <p>Street: 123 Nguyễn Thị Minh Khai</p>
-            <p>Phone: 0123456789</p>
-            <p>Discription: Gần chợ Bến Thành</p>
-          </li>
-          <li class="list-group-item">
-            <div class="d-flex justify-content-between">
-              <h5>Address 2</h5>
-              <div>
-                <button class="btn btn-danger mx-1">
-                  <i class="fa-solid fa-trash"></i></button
-                ><button class="btn btn-warning">
-                  <i class="fa-solid fa-pen"></i>
-                </button>
-              </div>
-            </div>
-            <p>City: HCM</p>
-            <p>District: 1</p>
-            <p>Street: 123 Nguyễn Thị Minh Khai</p>
-            <p>Phone: 0123456789</p>
-            <p>Discription: Gần chợ Bến Thành</p>
+            <p>City: {{ address.city }}</p>
+            <p>District: {{ address.district }}</p>
+            <p>Street: {{ address.street }}</p>
+            <p>Phone: {{ address.phone }}</p>
+            <p>Discription: {{ address.discription }}</p>
           </li>
         </ul>
       </div>
@@ -177,13 +166,17 @@ import banana from "../assets/images/me.jpg";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { fetchUserData } from "@/assets/js/user/fetchUser";
+import { fetchUserAddress } from "@/assets/js/user/fetchUser";
 
-const fullname = ref("Võ Thanh Bin");
+const { addresses, fetchUserAddresses } = fetchUserAddress();
+const { user, fetchUserProfile } = fetchUserData();
+// const fullname = ref("Võ Thanh Bin");
 const isDisabled = ref(true);
 const isShowAddress = ref(false);
-const { user, fetchUserProfile } = fetchUserData();
-onMounted(() => {
-  fetchUserProfile();
+
+onMounted(async () => {
+  await fetchUserProfile();
+  await fetchUserAddresses(user.value.id);
 });
 
 const onToggleAddress = () => {

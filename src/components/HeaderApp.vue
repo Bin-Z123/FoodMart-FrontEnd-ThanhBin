@@ -52,6 +52,7 @@
                 data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample"
                 aria-controls="offcanvasExample"
+                @click="eventBus.showOffcanvas = true"
               >
                 <span
                   >Your Cart <i class="fa-solid fa-cart-shopping fa"></i
@@ -112,8 +113,10 @@ import ForgotPasswordModal from "./ForgotPasswordModal.vue";
 import { onMounted, ref } from "vue";
 import { fetchUserData } from "@/assets/js/user/fetchUser";
 import { fetchlogOut } from "@/assets/js/auth/fetchAuth";
+import { eventBus } from "@/assets/js/eventBus";
 const { fetchLogout } = fetchlogOut();
 const { user, fetchUserProfile, isLogin } = fetchUserData();
+
 // const fetchLogout = async () => {};
 const totalAmount = ref(0);
 

@@ -197,7 +197,7 @@
                   placeholder="Nhập URL hình ảnh"
                 />
               </div>
-              <input type="text" v-model="localProduct.image" />
+              <input type="hidden" v-model="localProduct.image" />
 
               <!-- Số lượng tồn kho -->
               <div class="mb-3">
@@ -373,7 +373,7 @@ const handleSubmit = async () => {
     productFormC.value.reset();
     img.value = null;
     emit("productCreated");
-    alert("Tạo sạn phẩm thành công");
+    alert("Tạo sản phẩm thành công");
   }
 };
 // Xử lý load ảnh lên form
@@ -404,11 +404,11 @@ const handleSubmitUpdate = async () => {
   );
   console.log("Form ProductU:", localProduct.value, file);
   if (updatedProduct) {
-    console.log("Cập nhật sản phẩm thành công:", localProduct.value);
+    console.log("Cập nhật sản phẩm thành công", localProduct.value);
     productFormU.value.reset();
     img.value = null;
     emit("productCreated");
-    alert("Caap nhật sản phẩm thanh cong");
+    alert("Cập nhật sản phẩm thành công");
   }
 };
 

@@ -7,6 +7,31 @@
       <HeaderaAdmin :toggleSidebar="toggleSidebar" />
       <h1>Category</h1>
       <div class="container">
+        <!-- FORM -->
+        <div class="mb-3 w-50">
+          <form>
+            <div class="mb-3">
+              <label for="category" class="form-label">Tên Loại SP: </label>
+              <input
+                type="category"
+                class="form-control"
+                id="category"
+                aria-describedby="emailHelp"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <!-- <label for="status" class="form-label">Trạng thái</label> -->
+              <!-- <input
+                type="password"
+                class="form-control"
+                id="exampleInputPassword1"
+              /> -->
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+        <!-- TABLE -->
         <table
           class="table table-hover table-bordered align-middle text-center"
         >

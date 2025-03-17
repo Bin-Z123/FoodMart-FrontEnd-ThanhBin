@@ -30,7 +30,7 @@
         >
           <div>
             <h6 class="my-0">
-              {{ cart.product.nameProduct }}{{ cart.id.idUser }}
+              {{ cart.product.nameProduct }}
             </h6>
             <div class="d-flex align-item-center">
               <div class="input-group product-qty mt-1">
@@ -72,27 +72,55 @@
       </ul>
       <button
         class="w-100 btn btn-warning btn-lg text-white"
-        type="submit"
+        type="button"
         cursorshover="true"
+        @click.prevent="handleChekout"
+        :disabled="isLoadingOrder"
       >
-        Continue to checkout
+        <span v-if="isLoadingOrder">
+          <div class="spinner-border spinner-border-sm" role="status"></div>
+          Are checkout...</span
+        >
+        <span v-else>Continue to checkout</span>
       </button>
+      <div>
+        <label>Chọn phương thức thanh toán</label>
+        <select class="form-control" v-model="order.paymentStatus">
+          <option value="COD">Thanh Toán Khi Nhận Hàng</option>
+          <option value="MOMO">Chuyển khoản qua Momo</option>
+          <option value="BANK">Chuyển khoản qua Ngân hàng</option>
+        </select>
+      </div>
+      <div>
+        <label>Chọn địa chỉ</label>
+        <select class="form-control" v-model="order.address">
+          <option value="" disabled selected>Chọn địa chỉ giao hàng</option>
+          <option
+            v-for="address in addresses"
+            :key="address.id"
+            :value="`${address.city}/${address.district}//${address.street} - ${address.phone} - [${address.description}]`"
+          >
+            {{ address.city }}/{{ address.district }}//{{ address.street }} -
+            {{ address.phone }} - [{{ address.description }}]
+          </option>
+        </select>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { onMounted, watch } from "vue";
+import { onMounted, watch, computed } from "vue";
 import { fetchCartbyUser } from "@/assets/js/cart/fetchCart";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import { eventBus } from "@/assets/js/eventBus";
-// AddCart
+import { fetchUserAddress } from "@/assets/js/user/fetchUser";
+import { fetchCreate } from "@/assets/js/order/fetchOrder";
+const { carts, fetchCartUser } = fetchCartbyUser();
 const emit = defineEmits(["update-total"]);
-const calculateTotal = (cart) => {
-  if (!cart || !cart.product || !cart.quantity || !cart.product.price) {
-    return 0;
-  }
-  return cart.quantity * cart.product.price;
-};
+const props = defineProps({
+  user: Object,
+  isLogin: Boolean,
+});
 const toTal = () => {
   const total = carts.value.reduce(
     (total, cart) => total + calculateTotal(cart),
@@ -101,19 +129,49 @@ const toTal = () => {
   emit("update-total", total);
   return total;
 };
+//Add Order
+const { fetchUserAddresses, addresses } = fetchUserAddress();
+const { fetchOrderCreate, isLoadingOrder } = fetchCreate();
+const order = ref({
+  totalAmount: computed(() => toTal()),
+  address: "",
+  paymentStatus: "COD",
+});
+const handleChekout = async () => {
+  console.log("Order Total: ", order.value.totalAmount);
+  if (!order.value.address) {
+    alert("Vui lòng chọn địa chỉ giao hàng");
+    return;
+  }
+  await fetchOrderCreate(props.user.id, order.value);
+  await fetchCartUser(props.user.id);
+};
+// AddCart
+
+const calculateTotal = (cart) => {
+  if (!cart || !cart.product || !cart.quantity || !cart.product.price) {
+    return 0;
+  }
+  return cart.quantity * cart.product.price;
+};
 
 // LOAD CART
-const props = defineProps({
-  user: Object,
-  isLogin: Boolean,
-});
-const { carts, fetchCartUser } = fetchCartbyUser();
-onMounted(() => {
-  if (props.isLogin && props.user && props.user.id) {
-    fetchCartUser(user.id);
-    console.log("user-cart: ", user.value);
-    console.log("cart: ", carts.value);
-  }
+
+onMounted(async () => {
+  // if (props.isLogin && props.user && props.user.id) {
+  //   // await fetchCartUser(props.user.id);
+  //   console.log("user-cart: ", props.user.value);
+  //   console.log("cart: ", carts.value);
+  // }
+  watch(
+    () => eventBus.showOffcanvas,
+    (newVal) => {
+      if (newVal) {
+        fetchUserAddresses(props.user.id); // Gọi API khi mở
+        eventBus.showOffcanvas = false;
+      }
+    }
+  );
 });
 watch(
   () => props.user,

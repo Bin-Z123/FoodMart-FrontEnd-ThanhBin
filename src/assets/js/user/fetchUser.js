@@ -20,6 +20,8 @@ export const fetchUserData = () => {
         user.value = data.result;
         console.log("User: ", user.value);
         isLogin.value = true;
+      } else if (response.status === 401 || response.status === 403) {
+        isLogin.value = false;
       } else {
         isLogin.value = false;
       }
@@ -48,6 +50,7 @@ export const fetchUserAddress = () => {
         addresses.value = data.result;
       } else if (response.status === 401 || response.status === 403) {
         alert("Vui lòng đăng nhập");
+        window.location.href = "/signin";
       } else {
         alert("Lỗi không xác định");
       }
@@ -62,16 +65,20 @@ export const fetchUserAddress = () => {
 };
 // CREATE ADDRESS
 export const fetchUserAddressCreate = () => {
-  const isLoadingAddress = false;
+  const isLoadingAddress = ref(false);
   const fetchAddressCreate = async (address) => {
-    isLoadingAddress = true;
+    isLoadingAddress.value = true;
     try {
       const response = await fetch(`${baseURL}/api/user/address`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(address),
         credentials: "include",
       });
       if (response.ok) {
+        alert("Thêm địa chỉ mới thành công");
         const data = response.json;
         console.log("Dữ liệu trả về khi thêm address: ", data);
       } else if (response.status === 401 || response.status === 403) {
@@ -82,11 +89,37 @@ export const fetchUserAddressCreate = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      isLoadingAddress = false;
+      isLoadingAddress.value = false;
     }
   };
   return {
     isLoadingAddress,
     fetchAddressCreate,
+  };
+};
+//ALL USER
+export const fetchAllUser = () => {
+  const users = ref([]);
+  const fetchAllUsers = async () => {
+    try {
+      const response = await fetch(`${baseURL}/api/user`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        users.value = data;
+      } else if (response.status === 401 || response.status === 403) {
+        alert("Vui Lòng Đăng Nhập");
+      } else {
+        alert("Lỗi không xác định");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return {
+    users,
+    fetchAllUsers,
   };
 };

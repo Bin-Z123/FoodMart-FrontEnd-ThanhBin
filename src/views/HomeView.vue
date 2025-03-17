@@ -38,7 +38,7 @@
                     ><img
                       class=""
                       style="height: 200px"
-                      :src="banana"
+                      :src="`${urlCloudImage}${product.image}`"
                       alt="img"
                   /></a>
                 </figure>
@@ -69,7 +69,7 @@
 import HeaderApp from "@/components/HeaderApp.vue";
 import NavbarApp from "@/components/NavbarApp.vue";
 import SliderApp from "@/components/SliderApp.vue";
-import banana from "../assets/images/bananas.png";
+// import banana from "../assets/images/bananas.png";
 import { onMounted } from "vue";
 import { ref } from "vue";
 import { fetchAddCartProduct } from "@/assets/js/cart/fetchCart";
@@ -78,7 +78,7 @@ import { fetchUserData } from "@/assets/js/user/fetchUser";
 import { eventBus } from "@/assets/js/eventBus";
 // Category
 const categories = ref([]);
-
+const urlCloudImage = process.env.VUE_APP_CLOUD_IMG_URL;
 const fetchCategoryData = async () => {
   try {
     const response = await fetch("http://localhost:9999/api/category");

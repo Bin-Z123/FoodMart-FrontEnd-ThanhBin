@@ -117,18 +117,64 @@
           v-if="isShowAddress"
           class="border-bottom border-secondary mb-3 pb-3"
         >
-          <form>
+          <form @submit.prevent="handleCreateAddress(formAddress.value)">
             <label for="" class="form-label"> City: </label> <br />
-            <input class="form-control" type="text" name="" id="" /> <br />
+            <input
+              class="form-control"
+              type="text"
+              name="city"
+              id="city"
+              v-model="formAddress.city"
+            />
+            <br />
             <label for="" class="form-label"> District: </label> <br />
-            <input class="form-control" type="text" name="" id="" /> <br />
+            <input
+              class="form-control"
+              type="text"
+              name="district"
+              id="district"
+              v-model="formAddress.district"
+            />
+            <br />
             <label for="" class="form-label"> Street: </label> <br />
-            <input class="form-control" type="text" name="" id="" /> <br />
+            <input
+              class="form-control"
+              type="text"
+              name="street"
+              id="street"
+              v-model="formAddress.street"
+            />
+            <br />
             <label for="" class="form-label"> Phone: </label> <br />
-            <input class="form-control" type="text" name="" id="" /> <br />
+            <input
+              class="form-control"
+              type="text"
+              name="phone"
+              id="phone"
+              v-model="formAddress.phone"
+            />
+            <br />
             <label for="" class="form-label"> Discription: </label> <br />
-            <textarea class="form-control" name="" id=""></textarea><br />
-            <button type="submit" class="btn btn-primary">Save</button>
+            <textarea
+              class="form-control"
+              name="discription"
+              id="discription"
+              v-model="formAddress.description"
+            ></textarea
+            ><br />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              :disabled="isLoadingAddress"
+            >
+              <span v-if="isLoadingAddress"
+                ><div
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                ></div>
+                Save...</span
+              ><span v-else>Save</span>
+            </button>
             <button type="reset" class="btn btn-light">Reset</button>
           </form>
         </div>
@@ -136,11 +182,11 @@
         <ul class="list-group mt-1">
           <li
             class="list-group-item"
-            v-for="address in addresses"
+            v-for="(address, index) in addresses"
             :key="address.id"
           >
             <div class="d-flex justify-content-between">
-              <h5>Address 1</h5>
+              <h5>Địa chỉ {{ index + 1 }}</h5>
               <div>
                 <button class="btn btn-danger mx-1">
                   <i class="fa-solid fa-trash"></i></button
@@ -153,7 +199,7 @@
             <p>District: {{ address.district }}</p>
             <p>Street: {{ address.street }}</p>
             <p>Phone: {{ address.phone }}</p>
-            <p>Discription: {{ address.discription }}</p>
+            <p>Discription: {{ address.description }}</p>
           </li>
         </ul>
       </div>
@@ -167,16 +213,34 @@ import { ref } from "vue";
 import { onMounted } from "vue";
 import { fetchUserData } from "@/assets/js/user/fetchUser";
 import { fetchUserAddress } from "@/assets/js/user/fetchUser";
+import { fetchUserAddressCreate } from "@/assets/js/user/fetchUser";
 
 const { addresses, fetchUserAddresses } = fetchUserAddress();
+const { isLoadingAddress, fetchAddressCreate } = fetchUserAddressCreate();
 const { user, fetchUserProfile } = fetchUserData();
 // const fullname = ref("Võ Thanh Bin");
 const isDisabled = ref(true);
 const isShowAddress = ref(false);
-
+const formAddress = ref({
+  city: "",
+  phone: "",
+  district: "",
+  street: "",
+  description: "",
+  user: {
+    id: "",
+  },
+});
+const handleCreateAddress = async () => {
+  await fetchUserProfile();
+  console.log("Form Address: ", JSON.stringify(formAddress.value));
+  await fetchAddressCreate(formAddress.value);
+  await fetchUserAddresses(formAddress.value.user.id);
+};
 onMounted(async () => {
   await fetchUserProfile();
   await fetchUserAddresses(user.value.id);
+  formAddress.value.user.id = user.value.id;
 });
 
 const onToggleAddress = () => {

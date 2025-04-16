@@ -16,7 +16,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-link active" aria-current="page" href="#">Home</a>
-          <a class="nav-link" href="#">About me</a>
+          <router-link class="nav-link" to="/order">Order</router-link>
           <router-link class="nav-link" to="/admin/dashboard"
             >Admin</router-link
           >

@@ -71,6 +71,7 @@
         </li>
       </ul>
       <button
+        id="checkout"
         class="w-100 btn btn-warning btn-lg text-white"
         type="button"
         cursorshover="true"
@@ -83,6 +84,11 @@
         >
         <span v-else>Continue to checkout</span>
       </button>
+      <div class="mt-3">
+        <p>
+          <b>{{ messCreateOrder }}</b>
+        </p>
+      </div>
       <div>
         <label>Chọn phương thức thanh toán</label>
         <select class="form-control" v-model="order.paymentStatus">
@@ -93,7 +99,11 @@
       </div>
       <div>
         <label>Chọn địa chỉ</label>
-        <select class="form-control" v-model="order.address">
+        <select
+          class="form-control"
+          v-model="order.address"
+          id="select-address"
+        >
           <option value="" disabled selected>Chọn địa chỉ giao hàng</option>
           <option
             v-for="address in addresses"
@@ -131,7 +141,7 @@ const toTal = () => {
 };
 //Add Order
 const { fetchUserAddresses, addresses } = fetchUserAddress();
-const { fetchOrderCreate, isLoadingOrder } = fetchCreate();
+const { fetchOrderCreate, isLoadingOrder, messCreateOrder } = fetchCreate();
 const order = ref({
   totalAmount: computed(() => toTal()),
   address: "",
@@ -140,7 +150,7 @@ const order = ref({
 const handleChekout = async () => {
   console.log("Order Total: ", order.value.totalAmount);
   if (!order.value.address) {
-    alert("Vui lòng chọn địa chỉ giao hàng");
+    messCreateOrder.value = "Vui lòng chọn địa chỉ giao hàng";
     return;
   }
   await fetchOrderCreate(props.user.id, order.value);

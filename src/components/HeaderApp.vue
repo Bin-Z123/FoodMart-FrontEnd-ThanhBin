@@ -10,19 +10,7 @@
         <div
           class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block"
         >
-          <div class="search-bar bg-light p-2 rounded-4">
-            <form class="d-flex" role="search">
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button class="btn btn-outline-light text-black" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </button>
-            </form>
-          </div>
+          <div class="search-bar bg-light p-2 rounded-4"></div>
         </div>
         <div
           class="col-sm-8 col-lg-4 d-flex justify-content-end justify-content-center align-items-center"
@@ -47,6 +35,7 @@
             <!-- Your Cart -->
             <li>
               <button
+                id="your-cart"
                 class="btn border-0 bg-light d-flex flex-column align-items-center"
                 type="button"
                 data-bs-toggle="offcanvas"

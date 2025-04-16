@@ -3,6 +3,7 @@ const baseURL = process.env.VUE_APP_BASE_URL; //Lấy url của backend từ fil
 //Create Order
 export const fetchCreate = () => {
   const isLoadingOrder = ref(false);
+  const messCreateOrder = ref("");
   const fetchOrderCreate = async (idUser, order) => {
     isLoadingOrder.value = true;
     const formData = new FormData();
@@ -24,13 +25,16 @@ export const fetchCreate = () => {
       const data = await response.json();
       if (response.ok) {
         console.log("Đặt hàng thành công", data);
-        alert("Đặt hàng thành công");
+        messCreateOrder.value = "Đặt hàng thành công";
+        // alert("Đặt hàng thành công");
         return data;
       } else if (response.status === 403 || response.status === 401) {
+        messCreateOrder.value = "Vui lòng đăng nhập";
         alert("Vui lòng đăng nhập");
       } else {
         console.error("Lỗi không xác định", data);
-        alert("Lỗi không xác định");
+        messCreateOrder.value = "Lỗi đặt hàng";
+        // alert("Lỗi không xác định");
       }
     } catch (error) {
       console.error("error order: ", error);
@@ -39,7 +43,35 @@ export const fetchCreate = () => {
     }
   };
   return {
+    messCreateOrder,
     isLoadingOrder,
     fetchOrderCreate,
+  };
+};
+//Get Order by User
+export const OrderUser = () => {
+  const orders = ref([]);
+  const fetchOrderUser = async (idUser) => {
+    try {
+      const response = await fetch(`${baseURL}/api/user/order/${idUser}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        orders.value = data.result;
+      }
+      // else if (response.status === 401 || response.status === 403) {
+      //   alert("Vui Lòng Đăng Nhập");
+      // } else {
+      //   alert("Lỗi không xác định");
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return {
+    orders,
+    fetchOrderUser,
   };
 };

@@ -18,15 +18,23 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Email:</label>
-          <input type="email" class="form-control" id="username" name="email" />
+          <input
+            type="email"
+            class="form-control"
+            id="username"
+            name="email"
+            @input="messError.email = ''"
+            v-model="formRegister.email"
+          />
         </div>
+        <p class="text-danger">{{ messError.email }}</p>
         <div class="mb-3">
           <label class="form-label">Fullname:</label>
           <input
             type="text"
             class="form-control"
-            id="email"
-            name="email"
+            id="fullname"
+            name="fullname"
             @input="messError.fullname = ''"
             v-model="formRegister.fullname"
           />

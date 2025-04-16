@@ -28,6 +28,7 @@ export const fetchlogOut = () => {
 };
 // REGISTER
 export const fetchRegisterUser = () => {
+  const messRegister = ref("");
   const isLoading = ref(false);
   const fetchRegister = async (userRegister) => {
     isLoading.value = true;
@@ -40,7 +41,7 @@ export const fetchRegisterUser = () => {
         body: JSON.stringify(userRegister),
       });
       if (response.ok) {
-        alert("Đăng ký thành công");
+        messRegister.value = "Đăng ký thành công";
         window.location.href = "/signin";
       } else {
         alert("Lỗi không xác định");
@@ -52,6 +53,7 @@ export const fetchRegisterUser = () => {
     }
   };
   return {
+    messRegister,
     fetchRegister,
     isLoading,
   };

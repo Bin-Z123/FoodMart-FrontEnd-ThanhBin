@@ -107,7 +107,6 @@ const fetchLogin = async () => {
       } else {
         window.location.href = "/";
       }
-      alert("Đăng nhập thành công");
     } else {
       switch (response.status) {
         case 401:

@@ -1,5 +1,6 @@
 <template>
   <HeaderApp />
+  <OrderDetailModal :selectOrderDetail="selectOrderDetail" />
   <section>
     <div class="container-fluid">
       <table class="table table-bordered table-striped table-hover">
@@ -30,7 +31,14 @@
             <td v-else-if="order.status === 'DELIVERED'">Đã giao hàng</td>
             <td v-else>Đang xử lý</td>
             <td>
-              <button class="btn btn-primary">Xem chi tiết</button>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#orderDetailUser"
+                class="btn btn-primary"
+                @click="openOrderDetail(order)"
+              >
+                Xem chi tiết
+              </button>
             </td>
           </tr>
         </tbody>
@@ -43,6 +51,7 @@ import HeaderApp from "@/components/HeaderApp.vue";
 import { onMounted, ref, watch } from "vue";
 import { OrderUser } from "@/assets/js/order/fetchOrder";
 import { fetchUserData } from "@/assets/js/user/fetchUser";
+import OrderDetailModal from "@/components/OrderDetailModal.vue";
 
 const { orders, fetchOrderUser } = OrderUser();
 const { user, fetchUserProfile } = fetchUserData();
@@ -64,4 +73,10 @@ watch(
     userFullname.value = newValue.fullname;
   }
 );
+//OrderDetailModal
+const selectOrderDetail = ref(null);
+const openOrderDetail = (order) => {
+  selectOrderDetail.value = { ...order };
+  console.log("Order Detail: ", selectOrderDetail.value);
+};
 </script>

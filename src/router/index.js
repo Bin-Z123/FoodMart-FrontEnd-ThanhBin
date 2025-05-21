@@ -37,7 +37,7 @@ const routers = [
     path: "/order",
     name: "UserOrder",
     // component: Order,
-    component: () => import("../views/OrderView.vue"),
+    component: () => import("@/views/OrderView.vue"),
   },
   //Admin
   {

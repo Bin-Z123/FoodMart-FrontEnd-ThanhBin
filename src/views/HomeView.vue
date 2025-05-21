@@ -133,9 +133,10 @@ import { eventBus } from "@/assets/js/eventBus";
 // Category
 const categories = ref([]);
 const urlCloudImage = process.env.VUE_APP_CLOUD_IMG_URL;
+const baseURL = process.env.VUE_APP_BASE_URL;
 const fetchCategoryData = async () => {
   try {
-    const response = await fetch("http://localhost:9999/api/category");
+    const response = await fetch(`${baseURL}/api/category`);
     if (!response.ok) {
       console.log("Loi Khong Xac Dinh: " + response);
     }

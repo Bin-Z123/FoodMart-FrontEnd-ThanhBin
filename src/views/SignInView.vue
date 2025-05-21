@@ -89,13 +89,14 @@ const fetchLogin = async () => {
   const formData = new FormData();
   formData.append("username", formLogin.value.username);
   formData.append("password", formLogin.value.password);
+  const baseURL = process.env.VUE_APP_BASE_URL;
+  //New URL
   try {
-    const response = await fetch("http://localhost:9999/login", {
+    const response = await fetch(`${baseURL}/login`, {
       method: "POST",
       body: formData,
       credentials: "include", // Để lưu session ID vào cookie
     });
-
     if (response.ok) {
       console.log("Đăng nhập thành công");
       const { user, fetchUserProfile } = fetchUserData();

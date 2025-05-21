@@ -92,7 +92,7 @@
       <div>
         <label>Chọn phương thức thanh toán</label>
         <select class="form-control" v-model="order.paymentStatus">
-          <option value="COD">Thanh Toán Khi Nhận Hàng</option>
+          <option value="COD">Thanh Toán Khi Nhận Hàng.</option>
           <option value="MOMO">Chuyển khoản qua Momo</option>
           <option value="BANK">Chuyển khoản qua Ngân hàng</option>
         </select>
